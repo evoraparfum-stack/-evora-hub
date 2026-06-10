@@ -1,10 +1,234 @@
 <!DOCTYPE html>
-<html>
+<html lang="id">
 <head>
-<title>EVORA HUB</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>EVORA Sales Tracker</title>
+
+<style>
+body{
+font-family:Arial,sans-serif;
+background:#111;
+color:white;
+margin:0;
+padding:15px;
+}
+
+.logo{
+text-align:center;
+font-size:38px;
+font-weight:bold;
+letter-spacing:8px;
+margin:20px 0;
+}
+
+.card{
+background:#1d1d1d;
+padding:15px;
+border-radius:15px;
+margin-bottom:15px;
+}
+
+input,select{
+width:100%;
+padding:12px;
+margin:5px 0;
+border-radius:10px;
+border:none;
+box-sizing:border-box;
+}
+
+button{
+background:white;
+color:black;
+padding:12px;
+border:none;
+border-radius:10px;
+font-weight:bold;
+width:100%;
+}
+
+.stats{
+display:flex;
+gap:10px;
+}
+
+.stat{
+flex:1;
+background:#222;
+padding:10px;
+border-radius:10px;
+text-align:center;
+}
+
+.product{
+background:#222;
+padding:10px;
+border-radius:10px;
+margin-top:10px;
+}
+
+.small{
+font-size:12px;
+color:#aaa;
+}
+</style>
 </head>
+
 <body>
-<h1>EVORA HUB BERHASIL ONLINE 🚀</h1>
-<p>Web app sedang dalam tahap pembangunan.</p>
+
+<div class="logo">EVORA</div>
+
+<div class="card">
+<div class="stats">
+<div class="stat">
+<h2 id="totalProduk">0</h2>
+<div class="small">Produk</div>
+</div>
+
+<div class="stat">
+<h2 id="totalStok">0</h2>
+<div class="small">Stok</div>
+</div>
+</div>
+</div>
+
+<div class="card">
+<h3>Tambah Produk</h3>
+
+<input id="namaProduk" placeholder="Nama Produk">
+<input id="stokProduk" type="number" placeholder="Stok Awal">
+
+<button onclick="tambahProduk()">
+Simpan Produk
+</button>
+</div>
+
+<div class="card">
+<h3>Input Penjualan</h3>
+
+<select id="produkJual"></select>
+
+<input id="qtyJual" type="number" placeholder="Jumlah Terjual">
+
+<button onclick="simpanPenjualan()">
+Simpan Penjualan
+</button>
+</div>
+
+<div class="card">
+<h3>Daftar Produk</h3>
+<div id="listProduk"></div>
+</div>
+
+<script>
+
+let produk =
+JSON.parse(localStorage.getItem("evora_produk") || "[]");
+
+function saveData(){
+localStorage.setItem(
+"evora_produk",
+JSON.stringify(produk)
+);
+}
+
+function render(){
+
+document.getElementById("totalProduk").innerText =
+produk.length;
+
+let totalStok = 0;
+
+produk.forEach(p=>{
+totalStok += Number(p.stok);
+});
+
+document.getElementById("totalStok").innerText =
+totalStok;
+
+let html = "";
+let opsi = "";
+
+produk.forEach((p,index)=>{
+
+html += `
+<div class="product">
+<b>${p.nama}</b><br>
+Stok : ${p.stok}
+</div>
+`;
+
+opsi += `
+<option value="${index}">
+${p.nama}
+</option>
+`;
+
+});
+
+document.getElementById("listProduk").innerHTML =
+html;
+
+document.getElementById("produkJual").innerHTML =
+opsi;
+}
+
+function tambahProduk(){
+
+const nama =
+document.getElementById("namaProduk").value;
+
+const stok =
+document.getElementById("stokProduk").value;
+
+if(!nama){
+alert("Isi nama produk");
+return;
+}
+
+produk.push({
+nama:nama,
+stok:Number(stok)
+});
+
+saveData();
+render();
+
+document.getElementById("namaProduk").value="";
+document.getElementById("stokProduk").value="";
+
+alert("Produk berhasil disimpan");
+}
+
+function simpanPenjualan(){
+
+let index =
+document.getElementById("produkJual").value;
+
+let qty =
+Number(
+document.getElementById("qtyJual").value
+);
+
+if(produk[index].stok < qty){
+alert("Stok tidak cukup");
+return;
+}
+
+produk[index].stok -= qty;
+
+saveData();
+render();
+
+document.getElementById("qtyJual").value="";
+
+alert("Penjualan berhasil disimpan");
+}
+
+render();
+
+</script>
+
 </body>
 </html>
