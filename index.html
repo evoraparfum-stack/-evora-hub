@@ -111,7 +111,11 @@ Reset Semua Data
 </div>
 
 <br>
+<label>Pilih Bulan</label>
 
+<input
+type="month"
+id="bulanFilter">
 <div class="stat">
 Omzet Bulan Ini
 <br><br>
@@ -262,7 +266,12 @@ localStorage.getItem("evora_harga")
 
 document.getElementById("hargaGlobal").value =
 hargaGlobal;
-
+document.getElementById(
+"bulanFilter"
+).value =
+new Date()
+.toISOString()
+.slice(0,7);
 function save(){
 
 localStorage.setItem(
@@ -506,12 +515,33 @@ optionHTML;
 let omzet = 0;
 let pengeluaran = 0;
 
+const bulanDipilih =
+document.getElementById(
+"bulanFilter"
+).value;
+
 penjualan.forEach(x=>{
+
+if(
+x.tanggal.startsWith(
+bulanDipilih
+)
+){
 omzet += x.total;
+}
+
 });
 
 pengeluaranData.forEach(x=>{
+
+if(
+x.tanggal.startsWith(
+bulanDipilih
+)
+){
 pengeluaran += x.nominal;
+}
+
 });
 
 document.getElementById("omzet").innerText =
@@ -527,7 +557,16 @@ document.getElementById("laba").innerText =
 }
 
 render();
+document
+.getElementById(
+"bulanFilter"
+)
+.addEventListener(
+"change",
+render
+);
 
+render();
 </script>
 
 </body>
