@@ -3,134 +3,374 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>EVORA Sales Tracker</title>
+
+<title>EVORA Tracker MVP</title>
 
 <style>
 body{
 font-family:Arial,sans-serif;
 background:#111;
-color:white;
-margin:0;
+color:#fff;
 padding:15px;
-}
-
-.logo{
-text-align:center;
-font-size:38px;
-font-weight:bold;
-letter-spacing:8px;
-margin:20px 0;
 }
 
 .card{
 background:#1d1d1d;
 padding:15px;
-border-radius:15px;
+border-radius:12px;
 margin-bottom:15px;
 }
 
-input,select{
+h1{
+text-align:center;
+letter-spacing:6px;
+}
+
+input,select,button{
 width:100%;
 padding:12px;
-margin:5px 0;
-border-radius:10px;
+margin-top:6px;
+margin-bottom:6px;
 border:none;
+border-radius:8px;
 box-sizing:border-box;
 }
 
 button{
-background:white;
-color:black;
-padding:12px;
-border:none;
-border-radius:10px;
 font-weight:bold;
-width:100%;
+cursor:pointer;
 }
 
 .stats{
-display:flex;
+display:grid;
+grid-template-columns:1fr 1fr;
 gap:10px;
 }
 
 .stat{
-flex:1;
 background:#222;
-padding:10px;
+padding:12px;
 border-radius:10px;
 text-align:center;
 }
 
-.product{
-background:#222;
-padding:10px;
-border-radius:10px;
-margin-top:10px;
+.value{
+font-size:22px;
+font-weight:bold;
 }
 
-.small{
-font-size:12px;
-color:#aaa;
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+td,th{
+padding:8px;
+border-bottom:1px solid #333;
+text-align:left;
 }
 </style>
 </head>
 
 <body>
 
-<div class="logo">EVORA</div>
+<h1>EVORA</h1>
 
 <div class="card">
+<h3>Dashboard</h3>
+
 <div class="stats">
+
 <div class="stat">
-<h2 id="totalProduk">0</h2>
-<div class="small">Produk</div>
+<div class="value" id="totalProduk">0</div>
+<div>Produk</div>
 </div>
 
 <div class="stat">
-<h2 id="totalStok">0</h2>
-<div class="small">Stok</div>
+<div class="value" id="totalStok">0</div>
+<div>Stok</div>
 </div>
+
 </div>
+
+<br>
+
+<div class="stat">
+Omzet Bulan Ini
+<br><br>
+<b id="omzet">Rp 0</b>
+</div>
+
+<br>
+
+<div class="stat">
+Pengeluaran Bulan Ini
+<br><br>
+<b id="pengeluaran">Rp 0</b>
+</div>
+
+<br>
+
+<div class="stat">
+Laba Bulan Ini
+<br><br>
+<b id="laba">Rp 0</b>
+</div>
+
+</div>
+
+<div class="card">
+<h3>Harga Global</h3>
+
+<input
+id="hargaGlobal"
+type="number"
+placeholder="35000">
+
+<button onclick="simpanHarga()">
+Simpan Harga
+</button>
 </div>
 
 <div class="card">
 <h3>Tambah Produk</h3>
 
-<input id="namaProduk" placeholder="Nama Produk">
-<input id="stokProduk" type="number" placeholder="Stok Awal">
+<input
+id="namaProduk"
+placeholder="Nama Produk">
+
+<input
+id="stokProduk"
+type="number"
+placeholder="Stok">
 
 <button onclick="tambahProduk()">
-Simpan Produk
+Tambah Produk
 </button>
+
 </div>
 
 <div class="card">
-<h3>Input Penjualan</h3>
+<h3>Penjualan</h3>
 
-<select id="produkJual"></select>
+<select id="channel">
+<option>Shopee</option>
+<option>TikTok Shop</option>
+</select>
 
-<input id="qtyJual" type="number" placeholder="Jumlah Terjual">
+<select id="produkJual">
+</select>
+
+<input
+id="qtyJual"
+type="number"
+placeholder="Qty">
 
 <button onclick="simpanPenjualan()">
 Simpan Penjualan
 </button>
+
+</div>
+
+<div class="card">
+<h3>Pengeluaran</h3>
+
+<select id="kategori">
+<option>Iklan TikTok</option>
+<option>Iklan Shopee</option>
+<option>Botol</option>
+<option>Box</option>
+<option>Bibit</option>
+<option>Stiker</option>
+<option>Lainnya</option>
+</select>
+
+<input
+id="nominal"
+type="number"
+placeholder="Nominal">
+
+<button onclick="simpanPengeluaran()">
+Simpan Pengeluaran
+</button>
+
 </div>
 
 <div class="card">
 <h3>Daftar Produk</h3>
-<div id="listProduk"></div>
+
+<table>
+<thead>
+<tr>
+<th>Produk</th>
+<th>Stok</th>
+</tr>
+</thead>
+
+<tbody id="produkList">
+</tbody>
+
+</table>
 </div>
 
 <script>
 
 let produk =
-JSON.parse(localStorage.getItem("evora_produk") || "[]");
+JSON.parse(
+localStorage.getItem("evora_produk")
+|| "[]"
+);
 
-function saveData(){
+let penjualan =
+JSON.parse(
+localStorage.getItem("evora_penjualan")
+|| "[]"
+);
+
+let pengeluaranData =
+JSON.parse(
+localStorage.getItem("evora_pengeluaran")
+|| "[]"
+);
+
+let hargaGlobal =
+Number(
+localStorage.getItem("evora_harga")
+|| 35000
+);
+
+document.getElementById("hargaGlobal").value =
+hargaGlobal;
+
+function save(){
+
 localStorage.setItem(
 "evora_produk",
 JSON.stringify(produk)
 );
+
+localStorage.setItem(
+"evora_penjualan",
+JSON.stringify(penjualan)
+);
+
+localStorage.setItem(
+"evora_pengeluaran",
+JSON.stringify(pengeluaranData)
+);
+
+}
+
+function simpanHarga(){
+
+hargaGlobal =
+Number(
+document.getElementById("hargaGlobal").value
+);
+
+localStorage.setItem(
+"evora_harga",
+hargaGlobal
+);
+
+render();
+
+}
+
+function tambahProduk(){
+
+const nama =
+document.getElementById("namaProduk").value;
+
+const stok =
+Number(
+document.getElementById("stokProduk").value
+);
+
+if(!nama)return;
+
+produk.push({
+nama:nama,
+stok:stok
+});
+
+save();
+render();
+
+}
+
+function simpanPenjualan(){
+
+const index =
+document.getElementById("produkJual").value;
+
+const qty =
+Number(
+document.getElementById("qtyJual").value
+);
+
+if(qty<=0)return;
+
+if(produk[index].stok < qty){
+
+alert("Stok tidak cukup");
+return;
+
+}
+
+produk[index].stok -= qty;
+
+penjualan.push({
+
+tanggal:
+new Date()
+.toISOString()
+.slice(0,10),
+
+channel:
+document.getElementById("channel").value,
+
+produk:
+produk[index].nama,
+
+qty:qty,
+
+total:
+qty * hargaGlobal
+
+});
+
+save();
+render();
+
+}
+
+function simpanPengeluaran(){
+
+const nominal =
+Number(
+document.getElementById("nominal").value
+);
+
+if(nominal<=0)return;
+
+pengeluaranData.push({
+
+tanggal:
+new Date()
+.toISOString()
+.slice(0,10),
+
+kategori:
+document.getElementById("kategori").value,
+
+nominal:nominal
+
+});
+
+save();
+render();
+
 }
 
 function render(){
@@ -141,25 +381,25 @@ produk.length;
 let totalStok = 0;
 
 produk.forEach(p=>{
-totalStok += Number(p.stok);
+totalStok += p.stok;
 });
 
 document.getElementById("totalStok").innerText =
 totalStok;
 
-let html = "";
-let opsi = "";
+let produkHTML = "";
+let optionHTML = "";
 
 produk.forEach((p,index)=>{
 
-html += `
-<div class="product">
-<b>${p.nama}</b><br>
-Stok : ${p.stok}
-</div>
+produkHTML += `
+<tr>
+<td>${p.nama}</td>
+<td>${p.stok}</td>
+</tr>
 `;
 
-opsi += `
+optionHTML += `
 <option value="${index}">
 ${p.nama}
 </option>
@@ -167,63 +407,33 @@ ${p.nama}
 
 });
 
-document.getElementById("listProduk").innerHTML =
-html;
+document.getElementById("produkList").innerHTML =
+produkHTML;
 
 document.getElementById("produkJual").innerHTML =
-opsi;
-}
+optionHTML;
 
-function tambahProduk(){
+let omzet = 0;
+let pengeluaran = 0;
 
-const nama =
-document.getElementById("namaProduk").value;
-
-const stok =
-document.getElementById("stokProduk").value;
-
-if(!nama){
-alert("Isi nama produk");
-return;
-}
-
-produk.push({
-nama:nama,
-stok:Number(stok)
+penjualan.forEach(x=>{
+omzet += x.total;
 });
 
-saveData();
-render();
+pengeluaranData.forEach(x=>{
+pengeluaran += x.nominal;
+});
 
-document.getElementById("namaProduk").value="";
-document.getElementById("stokProduk").value="";
+document.getElementById("omzet").innerText =
+"Rp " + omzet.toLocaleString("id-ID");
 
-alert("Produk berhasil disimpan");
-}
+document.getElementById("pengeluaran").innerText =
+"Rp " + pengeluaran.toLocaleString("id-ID");
 
-function simpanPenjualan(){
+document.getElementById("laba").innerText =
+"Rp " + (omzet-pengeluaran)
+.toLocaleString("id-ID");
 
-let index =
-document.getElementById("produkJual").value;
-
-let qty =
-Number(
-document.getElementById("qtyJual").value
-);
-
-if(produk[index].stok < qty){
-alert("Stok tidak cukup");
-return;
-}
-
-produk[index].stok -= qty;
-
-saveData();
-render();
-
-document.getElementById("qtyJual").value="";
-
-alert("Penjualan berhasil disimpan");
 }
 
 render();
