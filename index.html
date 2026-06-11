@@ -81,10 +81,11 @@ background:#f59e0b;
 color:white;
 }
 
-.delete-btn{
-background:#ef4444;
-color:white;
-}
+<button
+class="reset-btn"
+onclick="resetSemua()">
+Reset Semua Data
+</button>
 </style>
 </head>
 
@@ -145,6 +146,10 @@ placeholder="35000">
 
 <button onclick="simpanHarga()">
 Simpan Harga
+</button>
+
+<button onclick="resetSemua()">
+Reset Semua Data
 </button>
 </div>
 
@@ -416,6 +421,27 @@ save();
 render();
 
 }
+
+}
+function resetSemua(){
+
+if(!confirm(
+"Yakin ingin menghapus SEMUA data?"
+)){
+return;
+}
+
+produk = [];
+penjualan = [];
+pengeluaranData = [];
+
+localStorage.removeItem("evora_produk");
+localStorage.removeItem("evora_penjualan");
+localStorage.removeItem("evora_pengeluaran");
+
+render();
+
+alert("Semua data berhasil dihapus");
 
 }
 function render(){
