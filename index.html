@@ -194,7 +194,27 @@ placeholder="Qty">
 <button onclick="simpanPenjualan()">
 Simpan Penjualan
 </button>
+<div class="card">
 
+<h3>Riwayat Penjualan</h3>
+
+<table>
+
+<thead>
+<tr>
+<th>Tanggal</th>
+<th>Produk</th>
+<th>Qty</th>
+<th>Channel</th>
+</tr>
+</thead>
+
+<tbody id="riwayatPenjualan">
+</tbody>
+
+</table>
+
+</div>
 </div>
 
 <div class="card">
@@ -220,7 +240,26 @@ Simpan Pengeluaran
 </button>
 
 </div>
+<div class="card">
 
+<h3>Riwayat Pengeluaran</h3>
+
+<table>
+
+<thead>
+<tr>
+<th>Tanggal</th>
+<th>Kategori</th>
+<th>Nominal</th>
+</tr>
+</thead>
+
+<tbody id="riwayatPengeluaran">
+</tbody>
+
+</table>
+
+</div>
 <div class="card">
 <h3>Daftar Produk</h3>
 
@@ -511,7 +550,45 @@ produkHTML;
 
 document.getElementById("produkJual").innerHTML =
 optionHTML;
+let penjualanHTML = "";
 
+penjualan.forEach(x=>{
+
+penjualanHTML += `
+<tr>
+<td>${x.tanggal}</td>
+<td>${x.produk}</td>
+<td>${x.qty}</td>
+<td>${x.channel}</td>
+</tr>
+`;
+
+});
+
+document.getElementById(
+"riwayatPenjualan"
+).innerHTML =
+penjualanHTML;
+let pengeluaranHTML = "";
+
+pengeluaranData.forEach(x=>{
+
+pengeluaranHTML += `
+<tr>
+<td>${x.tanggal}</td>
+<td>${x.kategori}</td>
+<td>
+Rp ${x.nominal.toLocaleString("id-ID")}
+</td>
+</tr>
+`;
+
+});
+
+document.getElementById(
+"riwayatPengeluaran"
+).innerHTML =
+pengeluaranHTML;
 let omzet = 0;
 let pengeluaran = 0;
 
