@@ -448,9 +448,20 @@ let namaBaru = prompt(
 produk[index].nama
 );
 
-if(namaBaru){
+if(namaBaru === null) return;
 
-produk[index].nama = namaBaru;
+let stokBaru = prompt(
+"Stok Baru",
+produk[index].stok
+);
+
+if(stokBaru === null) return;
+
+produk[index].nama =
+namaBaru;
+
+produk[index].stok =
+Number(stokBaru);
 
 save();
 render();
@@ -461,16 +472,23 @@ render();
 
 function hapusProduk(index){
 
-if(confirm("Hapus produk ini?")){
+if(confirm(
+"Yakin ingin menghapus produk: " +
+produk[index].nama +
+" ?"
+)){
 
 produk.splice(index,1);
 
 save();
 render();
 
+alert("Produk berhasil dihapus");
+
 }
 
 }
+
 function resetSemua(){
 
 if(!confirm(
