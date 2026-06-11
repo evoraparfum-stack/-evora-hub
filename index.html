@@ -69,6 +69,22 @@ padding:8px;
 border-bottom:1px solid #333;
 text-align:left;
 }
+.action-btn{
+width:auto;
+padding:6px 10px;
+margin:2px;
+font-size:12px;
+}
+
+.edit-btn{
+background:#f59e0b;
+color:white;
+}
+
+.delete-btn{
+background:#ef4444;
+color:white;
+}
 </style>
 </head>
 
@@ -203,7 +219,7 @@ Simpan Pengeluaran
 <thead>
 <tr>
 <th>Produk</th>
-<th>Stok</th>
+<th>Stok</th> <th>Aksi</th>>
 </tr>
 </thead>
 
@@ -372,7 +388,36 @@ save();
 render();
 
 }
+function editProduk(index){
 
+let namaBaru = prompt(
+"Nama Produk Baru",
+produk[index].nama
+);
+
+if(namaBaru){
+
+produk[index].nama = namaBaru;
+
+save();
+render();
+
+}
+
+}
+
+function hapusProduk(index){
+
+if(confirm("Hapus produk ini?")){
+
+produk.splice(index,1);
+
+save();
+render();
+
+}
+
+}
 function render(){
 
 document.getElementById("totalProduk").innerText =
@@ -394,8 +439,27 @@ produk.forEach((p,index)=>{
 
 produkHTML += `
 <tr>
+
 <td>${p.nama}</td>
+
 <td>${p.stok}</td>
+
+<td>
+
+<button
+class="action-btn edit-btn"
+onclick="editProduk(${index})">
+Edit
+</button>
+
+<button
+class="action-btn delete-btn"
+onclick="hapusProduk(${index})">
+Hapus
+</button>
+
+</td>
+
 </tr>
 `;
 
